@@ -292,8 +292,4 @@ def check_exit(asset, context, data):
 #     """ this function is called every minute. """
 #     enter_trade(context, data)
 ##################################################################
-    
-       
-
-        
 
