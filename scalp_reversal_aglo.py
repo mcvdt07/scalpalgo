@@ -39,14 +39,14 @@ from blueshift.api import (symbol, order_target, get_datetime, terminate,
 
 # for live
 
-accountCode = '8000131387'
-access_token = '5d215cc7c1fc34f7da95766c8d3c44f956e5fd4e'
-server='real'
+# accountCode = '8000131387'
+# access_token = '5d215cc7c1fc34f7da95766c8d3c44f956e5fd4e'
+# server='real'
 
 # For demo
-# accountCode = '701522959'
-# access_token = '216883126b65a7bed7295c074144ee641f3c3621'
-# server='demo'
+accountCode = '701522959'
+access_token = '216883126b65a7bed7295c074144ee641f3c3621'
+server='demo'
 
 
 def initialize(context):
@@ -77,21 +77,22 @@ def initialize(context):
                       'indicator_freq':'1m',
                       'buy_signal_threshold':0.5,
                       'sell_signal_threshold':-0.5,
-                      'SMA_period_short':30,
+                      'SMA_period_short':5,
                       'SMA_period_long':60,
                       'RSI_period':60,
-                      'trade_freq':10,
+                      'trade_freq':5,
                       'leverage':10,
                       'pip_cost':0.00003}
 ##################################################################
 #    Take profit / Stop loss
 ##################################################################
-    context.take_profit = 0.5
+    context.take_profit = 0.1
     # context.stop_loss = 0.0005
     context.traded = False
     context.entry_price = {}
     context.order_monitors = {}
     context.data_monitors = {}
+    on_data(check_exit)
 ##################################################################    
 
     # variable to control trading frequency
@@ -210,12 +211,14 @@ def check_exit(asset, context, data):
     """ this function is called on every data update. """
     px = data.current(asset, 'close')
     move = (px-context.entry_price[asset])/context.entry_price[asset]
-    print_msg(f'the move for {asset} is {move}')
+    # print_msg(f'the move for {asset} is {move}')
     if move > context.take_profit:
         # we hit the take profit target, book profit and terminate
         order_target(asset, 0)
-        off_data()
-        print_msg(f'booking profit for {asset} at {px} and turn off data monitor.')
+        # off_data()
+        off_trade(callback)
+        off_data(callback)
+        # print_msg(f'booking profit for {asset} at {px} and turn off data monitor.')
         terminate()
     # elif move < -context.stop_loss:
     #     # we hit the stoploss, sqaure off and terminate
