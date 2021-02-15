@@ -77,10 +77,10 @@ def initialize(context):
                       'indicator_freq':'1m',
                       'buy_signal_threshold':0.5,
                       'sell_signal_threshold':-0.5,
-                      'SMA_period_short':5,
+                      'SMA_period_short':15,
                       'SMA_period_long':60,
                       'RSI_period':60,
-                      'trade_freq':5,
+                      'trade_freq':30,
                       'leverage':10,
                       'pip_cost':0.00003}
 ##################################################################
