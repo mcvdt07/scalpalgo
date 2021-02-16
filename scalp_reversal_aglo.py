@@ -24,7 +24,6 @@ from zipline.api import(    symbol,
                             set_account_currency
                        )
 
-accountCode = '8000131387'
 
 def initialize(context):
     """
