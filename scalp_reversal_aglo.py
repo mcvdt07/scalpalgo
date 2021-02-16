@@ -37,16 +37,6 @@ from blueshift.api import (symbol, order_target, get_datetime, terminate,
 ##################################################################
 
 
-# for live
-
-# accountCode = '8000131387'
-# access_token = '5d215cc7c1fc34f7da95766c8d3c44f956e5fd4e'
-# server='real'
-
-# For demo
-accountCode = '701522959'
-access_token = '216883126b65a7bed7295c074144ee641f3c3621'
-server='demo'
 
 
 def initialize(context):
