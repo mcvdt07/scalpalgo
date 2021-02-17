@@ -36,9 +36,6 @@ from blueshift.api import (symbol, order_target, get_datetime, terminate,
                            on_data, on_trade, off_data, off_trade)
 ##################################################################
 
-
-
-
 def initialize(context):
     """
         A function to define things to do at the start of the strategy
@@ -47,7 +44,7 @@ def initialize(context):
     set_account_currency("USD")
 
     # lot-size (mini-lot for most brokers)
-    context.lot_size = 200
+    context.lot_size = 80
 
     # universe selection
     context.securities = [
@@ -70,19 +67,19 @@ def initialize(context):
                       'SMA_period_short':15,
                       'SMA_period_long':60,
                       'RSI_period':60,
-                      'trade_freq':30,
-                      'leverage':10,
+                      'trade_freq':15,
+                      'leverage':10,                      
                       'pip_cost':0.00003}
 ##################################################################
 #    Take profit / Stop loss
 ##################################################################
-    context.take_profit = 0.1
-    # context.stop_loss = 0.0005
+    context.take_profit = 0.0005
+    context.stop_loss = 5
     context.traded = False
     context.entry_price = {}
     context.order_monitors = {}
     context.data_monitors = {}
-    on_data(check_exit)
+    
 ##################################################################    
 
     # variable to control trading frequency
@@ -206,80 +203,36 @@ def check_exit(asset, context, data):
         # we hit the take profit target, book profit and terminate
         order_target(asset, 0)
         # off_data()
-        off_trade(callback)
-        off_data(callback)
+        off_trade()
+        off_data()
         # print_msg(f'booking profit for {asset} at {px} and turn off data monitor.')
         terminate()
-    # elif move < -context.stop_loss:
-    #     # we hit the stoploss, sqaure off and terminate
-    #     order_target(asset, 0)
-    #     off_data()
-    #     print_msg(f'booking loss for {asset} at {px} and turn off data monitor.')
-    #     terminate()
+        return
+  
+    elif move < -context.stop_loss:
+        # we hit the stoploss, sqaure off and terminate
+        order_target(asset, 0)
+        off_data()
+        # print_msg(f'booking loss for {asset} at {px} and turn off data monitor.')
+        terminate()
+
+def handle_data(context, data):
+    if move > 0.3:
+        order_target(asset, 0)
+        # off_data()
+        off_trade()
+        off_data()
+        # print_msg(f'booking profit for {asset} at {px} and turn off data monitor.')
+        terminate()
+        return
 
 ##################################################################
 
 
 
 
-##################################################################
-#    Take profit / Stop loss
-##################################################################
-# def print_msg(msg):
-#     msg = f'{get_datetime()}:' + msg
-#     print(msg)
-
-# def check_order(order_id, asset, context, data):
-#     """ this function is called on every trade update. """
-#     orders = context.orders
-#     if order_id in orders:
-#         order = orders[order_id]
-#         if order.pending > 0:
-#             print_msg(f'order {order_id} is pending')
-#             return
-#         context.entry_price[asset] = order.average_price
-#         on_data(partial(check_exit, asset))
-#         off_trade(context.order_monitors[asset])
-#         msg = f'traded order {order_id} for {asset} at '
-#         msg = msg + f'{context.entry_price[asset]},'
-#         msg = msg + ' set up exit monitor.'
-#         print_msg(msg)
-
-# def enter_trade(context, data):
-#     """ this function is called only once at the beginning. """
-#     if not context.traded:
-#         px = data.current(context.assets, 'close')
-#         # for more than one asset, set up a loop and create 
-#         # the monitoring function using partial from functools
-#         for asset in context.assets:
-#             # place a limit order at the last price
-#             order_id = order_target(asset, 1, px[asset])
-#             f = partial(check_order, order_id, asset)
-#             context.order_monitors[asset]=f
-#             on_trade(f)
-#             msg = f'placed a new trade {order_id} for {asset},'
-#             msg = msg + ' and set up order monitor.'
-#             print_msg(msg)
-#         context.traded = True
-
-
-
-# def initialize(context):
-#     """ this function is called once at the start of the execution. """
-#     context.assets = [
-#                         symbol('FXCM:AUD/USD'),
-#                         symbol('FXCM:EUR/CHF'), 
-#                         symbol('FXCM:EUR/JPY'),
-#                         symbol('FXCM:EUR/USD'),
-#                         symbol('FXCM:GBP/USD'),
-#                         symbol('FXCM:NZD/USD'),
-#                         symbol('FXCM:USD/CAD'),
-#                         symbol('FXCM:USD/CHF'),
-#                         symbol('FXCM:USD/JPY'),
-#                         ]
     
-# def handle_data(context, data):
-#     """ this function is called every minute. """
-#     enter_trade(context, data)
-##################################################################
+       
+
+        
 
