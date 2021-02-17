@@ -217,7 +217,7 @@ def check_exit(asset, context, data):
         terminate()
 
 def handle_data(context, data):
-    if move > 0.3:
+    if move > 0.5:
         order_target(asset, 0)
         # off_data()
         off_trade()
